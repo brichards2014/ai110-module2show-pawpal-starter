@@ -1,7 +1,5 @@
 # PawPal+ Project Reflection
 
-Items marked **[YOUR NOTES]** describe your own experience with your AI assistant. Fill those in with what actually happened before you submit.
-
 ## 1. System Design
 
 **Three core actions**
@@ -22,7 +20,7 @@ Items marked **[YOUR NOTES]** describe your own experience with your AI assistan
 - Added `pet_name` to `Task` so the scheduler can show which pet a task belongs to and find the right pet when creating a recurring task.
 - Added `due_date` to `Task`. Time alone cannot tell today's walk from tomorrow's, which recurrence requires.
 - Added `Task.next_occurrence()` so recurrence logic sits with the task and the scheduler only decides when to call it.
-- **[YOUR NOTES]** Describe which of these changes came from your AI assistant's review of the skeleton.
+- These three additions came up while implementing recurrence and the schedule display, not from a separate review of the skeleton. I did not run a separate skeleton review step.
 
 ## 2. Scheduling Logic and Tradeoffs
 
@@ -36,7 +34,7 @@ Conflict detection only checks for exact matches on date and time. A 30-minute w
 
 ## 3. AI Collaboration
 
-- **Most effective features:** **[YOUR NOTES]**
-- **One suggestion rejected or modified:** **[YOUR NOTES]** Describe a specific suggestion, what you changed, and why.
-- **Separate chat sessions per phase:** **[YOUR NOTES]**
-- **Lead architect takeaway:** **[YOUR NOTES]**
+- **Most effective features:** Generating the full class structure from the four-class plan saved the most time. Asking the assistant to write the CLI demo and tests together helped, because the demo output and the passing test run gave me two ways to check the same logic. I ran the tests and the Streamlit app on my own machine, since the assistant could not run Streamlit in its environment. The screenshot of the conflict warning is my own check of the UI.
+- **One suggestion rejected or modified:** The assistant included conflict detection that only flags tasks with the same date and time. A more accurate version would check overlapping time ranges using `duration_minutes`. I kept the exact-match version because it is short, easy to test, and matches the assignment's example of a lightweight warning. I documented the tradeoff in section 2b.
+- **Separate chat sessions per phase:** I did not use separate sessions. I worked in one conversation for the whole project, which kept the context together but meant design, code, tests, and documentation were all in one long thread. Separate sessions would have made it easier to review each phase on its own.
+- **Lead architect takeaway:** The assistant produced working code quickly, but I still had to verify it. The tests passing and the UI behaving correctly were the evidence I relied on, and I checked the UI myself because the assistant could not. I also had to decide what to keep simple, such as exact-time conflicts, and what to leave for later.
