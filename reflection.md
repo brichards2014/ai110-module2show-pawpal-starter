@@ -1,71 +1,42 @@
 # PawPal+ Project Reflection
 
+Items marked **[YOUR NOTES]** describe your own experience with your AI assistant. Fill those in with what actually happened before you submit.
+
 ## 1. System Design
 
-**a. Initial design**
+**Three core actions**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+- Add a pet to an owner profile.
+- Schedule a care task (walk, feeding, medication) for a pet with a time, duration, priority, and repeat setting.
+- See today's tasks in order, with warnings for conflicts.
 
-**b. Design changes**
+**1a. Initial design**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+- `Task` is a dataclass holding a description, time, frequency, completion status, and later duration, priority, and due date. It can mark itself complete.
+- `Pet` is a dataclass holding a name, species, and a list of tasks. It adds and removes tasks.
+- `Owner` holds a list of pets and returns all tasks across them.
+- `Scheduler` takes an owner and handles sorting, filtering, conflict detection, and recurrence. The data classes hold data and the scheduler holds the logic.
 
----
+**1b. Design changes**
+
+- Added `pet_name` to `Task` so the scheduler can show which pet a task belongs to and find the right pet when creating a recurring task.
+- Added `due_date` to `Task`. Time alone cannot tell today's walk from tomorrow's, which recurrence requires.
+- Added `Task.next_occurrence()` so recurrence logic sits with the task and the scheduler only decides when to call it.
+- **[YOUR NOTES]** Describe which of these changes came from your AI assistant's review of the skeleton.
 
 ## 2. Scheduling Logic and Tradeoffs
 
-**a. Constraints and priorities**
+**2a. Constraints**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler considers date, time, priority, completion status, and repeat frequency. Time and priority matter most because a missed medication costs more than a skipped play session.
 
-**b. Tradeoffs**
+**2b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
-
----
+Conflict detection only checks for exact matches on date and time. A 30-minute walk at 07:30 and a 5-minute feeding at 07:45 overlap in real life, and the scheduler does not flag them. Exact matching is short and easy to test. Checking overlap needs start and end times for every task. That is a reasonable next step because `duration_minutes` is already stored.
 
 ## 3. AI Collaboration
 
-**a. How you used AI**
-
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
-
-**b. Judgment and verification**
-
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
-
----
-
-## 4. Testing and Verification
-
-**a. What you tested**
-
-- What behaviors did you test?
-- Why were these tests important?
-
-**b. Confidence**
-
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
-
----
-
-## 5. Reflection
-
-**a. What went well**
-
-- What part of this project are you most satisfied with?
-
-**b. What you would improve**
-
-- If you had another iteration, what would you improve or redesign?
-
-**c. Key takeaway**
-
-- What is one important thing you learned about designing systems or working with AI on this project?
+- **Most effective features:** **[YOUR NOTES]**
+- **One suggestion rejected or modified:** **[YOUR NOTES]** Describe a specific suggestion, what you changed, and why.
+- **Separate chat sessions per phase:** **[YOUR NOTES]**
+- **Lead architect takeaway:** **[YOUR NOTES]**
