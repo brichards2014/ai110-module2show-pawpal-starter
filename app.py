@@ -8,11 +8,22 @@ st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 st.title("🐾 PawPal+")
 st.caption("Plan daily pet care, catch conflicts, and keep recurring tasks on track.")
 
+DATA_FILE = "data.json"
+
 # Streamlit reruns this script on every click, so the Owner lives in session_state.
+# On first load, restore saved data if data.json exists.
 if "owner" not in st.session_state:
-    st.session_state.owner = Owner("Pet Owner")
+    try:
+        st.session_state.owner = Owner.load_from_json(DATA_FILE)
+    except (OSError, ValueError, KeyError):
+        st.session_state.owner = Owner("Pet Owner")
 owner: Owner = st.session_state.owner
 scheduler = Scheduler(owner)
+
+
+def save() -> None:
+    """Persist the owner, pets, and tasks to data.json."""
+    owner.save_to_json(DATA_FILE)
 
 # --- Owner ---
 st.subheader("Owner")
@@ -30,6 +41,7 @@ with st.form("add_pet", clear_on_submit=True):
             st.warning(f"{pet_name} is already added.")
         else:
             owner.add_pet(Pet(pet_name.strip(), species))
+            save()
             st.success(f"Added {pet_name.strip()}.")
 
 if owner.pets:
@@ -58,7 +70,17 @@ else:
                     priority=priority,
                 )
             )
+            save()
             st.success(f"Added '{description}' for {target}.")
+
+# --- Next free slot ---
+st.subheader("Find a free time")
+slot_minutes = st.number_input("Task length (min)", min_value=1, max_value=240, value=30, key="slot_minutes")
+slot = scheduler.next_available_slot(int(slot_minutes))
+if slot:
+    st.info(f"Next free slot today for {int(slot_minutes)} minutes: {slot}")
+else:
+    st.info("No free slot left today between 07:00 and 21:00.")
 
 # --- Schedule ---
 st.subheader("Today's schedule")
@@ -105,6 +127,7 @@ if open_tasks:
     if st.button("Mark complete"):
         done = open_tasks[labels.index(choice)]
         follow_up = scheduler.mark_task_complete(done)
+        save()
         if follow_up:
             st.success(f"Done. Next {follow_up.frequency} task is set for {follow_up.due_date}.")
         else:

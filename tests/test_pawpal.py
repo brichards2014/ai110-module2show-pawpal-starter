@@ -101,3 +101,69 @@ def test_sort_by_priority_puts_high_first():
     pet.add_task(Task("Low", "06:00", priority="low"))
     pet.add_task(Task("High", "20:00", priority="high"))
     assert scheduler.sort_by_priority()[0].description == "High"
+
+
+# --- Stretch features: persistence and next available slot ---
+
+
+def test_owner_round_trip_through_dict():
+    owner, pet, _ = make_scheduler()
+    pet.add_task(Task("Walk", "07:30", "daily", 30, "high", date(2026, 11, 6)))
+    restored = Owner.from_dict(owner.to_dict())
+    task = restored.get_all_tasks()[0]
+    assert restored.name == "Jordan"
+    assert task.pet_name == "Biscuit"
+    assert task.due_date == date(2026, 11, 6)
+    assert task.priority == "high"
+
+
+def test_save_and_load_json(tmp_path):
+    owner, pet, _ = make_scheduler()
+    task = Task("Feed", "08:00", "weekly", 10, "low", date(2026, 11, 6))
+    pet.add_task(task)
+    task.mark_complete()
+    path = tmp_path / "data.json"
+    owner.save_to_json(str(path))
+    loaded = Owner.load_from_json(str(path))
+    assert len(loaded.pets) == 1
+    assert loaded.get_all_tasks()[0].completed is True
+    assert loaded.get_all_tasks()[0].frequency == "weekly"
+
+
+def test_next_available_slot_on_empty_day_is_day_start():
+    _, _, scheduler = make_scheduler()
+    assert scheduler.next_available_slot(30, on=date(2026, 11, 6)) == "07:00"
+
+
+def test_next_available_slot_skips_busy_time():
+    _, pet, scheduler = make_scheduler()
+    day = date(2026, 11, 6)
+    pet.add_task(Task("Walk", "07:00", duration_minutes=30, due_date=day))
+    pet.add_task(Task("Feed", "07:30", duration_minutes=15, due_date=day))
+    assert scheduler.next_available_slot(20, on=day) == "07:45"
+
+
+def test_next_available_slot_uses_gap_between_tasks():
+    _, pet, scheduler = make_scheduler()
+    day = date(2026, 11, 6)
+    pet.add_task(Task("Walk", "07:00", duration_minutes=30, due_date=day))
+    pet.add_task(Task("Groom", "09:00", duration_minutes=30, due_date=day))
+    assert scheduler.next_available_slot(60, on=day) == "07:30"
+    assert scheduler.next_available_slot(90, on=day) == "07:30"
+    assert scheduler.next_available_slot(100, on=day) == "09:30"
+
+
+def test_next_available_slot_ignores_completed_tasks():
+    _, pet, scheduler = make_scheduler()
+    day = date(2026, 11, 6)
+    walk = Task("Walk", "07:00", duration_minutes=60, due_date=day)
+    pet.add_task(walk)
+    walk.mark_complete()
+    assert scheduler.next_available_slot(30, on=day) == "07:00"
+
+
+def test_next_available_slot_returns_none_when_day_is_full():
+    _, pet, scheduler = make_scheduler()
+    day = date(2026, 11, 6)
+    pet.add_task(Task("Long task", "07:00", duration_minutes=840, due_date=day))
+    assert scheduler.next_available_slot(15, on=day) is None

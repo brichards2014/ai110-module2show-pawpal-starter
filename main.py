@@ -43,11 +43,24 @@ def main():
     for warning in scheduler.detect_conflicts() or ["No conflicts."]:
         print("  WARNING:", warning)
 
+    print("\nNext available slot")
+    print("-------------------")
+    for minutes in (20, 60):
+        slot = scheduler.next_available_slot(minutes)
+        print(f"  {minutes} min task: {slot or 'no free slot today'}")
+
     print("\nMarking 'Morning walk' complete (daily task)")
     walk = biscuit.tasks[1]
     follow_up = scheduler.mark_task_complete(walk)
     print(f"  Next occurrence created for {follow_up.due_date} at {follow_up.time}")
     print_tasks("Filter: completed tasks", scheduler.filter_tasks(completed=True))
+
+    print("\nPersistence")
+    print("-----------")
+    owner.save_to_json("demo_data.json")
+    reloaded = Owner.load_from_json("demo_data.json")
+    print(f"  Saved to demo_data.json and reloaded {len(reloaded.pets)} pets, "
+          f"{len(reloaded.get_all_tasks())} tasks")
 
 
 if __name__ == "__main__":

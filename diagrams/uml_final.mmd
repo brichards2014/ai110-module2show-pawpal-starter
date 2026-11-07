@@ -5,6 +5,10 @@ classDiagram
         +add_pet(pet)
         +get_pet(name) Pet
         +get_all_tasks() List~Task~
+        +to_dict() dict
+        +from_dict(data) Owner
+        +save_to_json(path)
+        +load_from_json(path) Owner
     }
     class Pet {
         +str name
@@ -12,6 +16,8 @@ classDiagram
         +List~Task~ tasks
         +add_task(task)
         +remove_task(task)
+        +to_dict() dict
+        +from_dict(data) Pet
     }
     class Task {
         +str description
@@ -24,6 +30,8 @@ classDiagram
         +str pet_name
         +mark_complete()
         +next_occurrence() Task
+        +to_dict() dict
+        +from_dict(data) Task
     }
     class Scheduler {
         +Owner owner
@@ -33,6 +41,7 @@ classDiagram
         +filter_tasks(pet_name, completed) List~Task~
         +todays_schedule(on) List~Task~
         +mark_task_complete(task) Task
+        +next_available_slot(duration_minutes, on, day_start, day_end) str
         +detect_conflicts() List~str~
     }
     Owner "1" --> "*" Pet : has

@@ -1,40 +1,18 @@
 # AI Interactions Log
 
-> **Stretch features only.** Only fill in the sections that apply to stretch features you attempted. If you did not attempt a stretch feature, leave its section blank or delete it. This file is not required for the core project.
-
----
-
 ## Agent Workflow (SF7)
 
-> Document your experience using an AI agent (e.g., Cursor Agent, Claude, Copilot) to make multi-step changes autonomously.
+**Tool:** Claude (Anthropic), used throughout the project in a single conversation. The agent had access to file and shell tools in a cloud workspace, allowing it to edit project files, run Python scripts, and execute pytest. However, it could not install or run Streamlit.
 
-**What task did you give the agent?**
+**My role:** I directed the development process by clarifying requirements, reviewing generated code, running deliverables locally, reporting errors, and requesting revisions or additional functionality. I tested the application on my Windows machine and in the browser, then used those results to guide the next steps. The agent assisted with implementation and documentation, while I remained responsible for verifying the results and deciding which changes to accept.
 
-<!-- Describe the goal you asked the agent to accomplish -->
+### Turn-by-turn log
 
-**What did the agent do?**
-
-<!-- List the steps the agent took (files edited, commands run, etc.) -->
-
-**What did you have to verify or fix manually?**
-
-<!-- Describe anything the agent got wrong or that required human review -->
-
----
-
-## Prompt Comparison (SF11)
-
-> Compare two different prompts (or two different models) on the same task.
-
-| | Option A | Option B |
-|-|----------|----------|
-| **Model / tool used** | | |
-| **Prompt** | | |
-| **Response summary** | | |
-| **What was useful** | | |
-| **Problems noticed** | | |
-| **Decision** | | |
-
-**Which approach did you use in your final implementation and why?**
-
-<!-- Your conclusion -->
+| Step | What I asked or did | What the agent did | What I checked or decided |
+| --- | --- | --- | --- |
+| 1 | Chose PawPal+ as the project to complete and provided the README structure and assignment expectations. | Developed the initial project structure, including the class design, `pawpal_system.py`, `main.py`, automated tests, Streamlit interface, UML diagrams, README, and reflection draft. It also ran the demonstration script and the initial 11 tests in its environment. | Reviewed the proposed structure and deliverables against the assignment requirements. I also identified that the Streamlit application would need to be tested locally because the agent could not run the interface. |
+| 2 | Ran the initial setup on my Windows machine and shared the terminal output when the installation and launch process did not work as expected. | Analyzed the errors, identified the incorrect requirements filename, the use of a Linux command in Windows Command Prompt, and the missing Streamlit installation. It provided corrected commands and explained how to launch the application using Python. | Followed the troubleshooting steps, corrected the commands, and reran the setup to verify that the issues were resolved. |
+| 3 | Executed the test suite and launched the Streamlit application. I then tested the main functionality by adding an owner, registering a pet, creating tasks, and attempting to schedule two tasks for the same time. | Reviewed the reported results and helped evaluate whether the scheduling behavior matched the project requirements. | Confirmed that the application handled the scheduling conflict correctly and displayed a warning. I captured a screenshot of the warning as evidence of the functionality working. |
+| 4 | Asked how to properly integrate the completed project with the official repository and whether I should fork it. | Explained the fork-based workflow and identified which starter files needed to be preserved or merged, including `README.md`, `reflection.md`, `app.py`, and `requirements.txt`. | Decided to follow the official fork workflow rather than overwrite the repository structure, helping ensure the original assignment files were retained. |
+| 5 | Requested assistance completing the reflection documentation. I first asked for draft responses for the individual sections and then requested a complete version of the file. | Drafted the reflection based on the development process and interactions from the session. It also identified statements that required my confirmation rather than presenting unverified details as facts. | Reviewed and adjusted the reflection to ensure it accurately represented my contributions, the agent's involvement, and the testing I personally performed. |
+| 6 | Uploaded the completed project folder and requested a grading review, including an assessment of the existing implementation and opportunities to earn extra credit. | Inspected the
